@@ -1,25 +1,25 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom'; 
 
 import '../login/Login.css'; 
-
-
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate(); 
 
-    const handleUserLogin = async (e) => {
+    const handleUserLogin = (e) => {
         e.preventDefault();
 
-        
-            const response = await axios.post("https://api.escuelajs.co/api/v1/auth/login", { email, password });
-            console.log(response.data);
-            
-       
-        
-    };
+        axios.post("https://api.escuelajs.co/api/v1/auth/login", { email, password })
+           .then(response => {
+            if(response.status === 201){
+                localStorage.setItem("token", response.data.access_token)
+                navigate('/profile')
+            }
+           })
+    }
 
     return (
         <>

@@ -1,32 +1,33 @@
 import React, { useState } from 'react';
-import axios from '../../api/axios';
+import axios from 'axios';
 import '../register/Register.css';
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('');
     const [avatar, setAvatar] = useState('');
+
 
     const handleUserRegister = (e) => {
         e.preventDefault();
-
-        const token = "your_access_token_here";
-
-        axios.get("/auth/profile", { 
-            headers: {
-                "Authorization": `Bearer ${token}`
-            },
-            params: {
-                name,
-                email,
-                password,
-                role,
-                avatar
+        axios.post("https://api.escuelajs.co/api/v1/users/", { 
+            name,email,password,avatar
+        })
+        .then(response => {
+            if(response.status === 201){
+                alert("Use created successflly")
+                navigate('/login')
+                toast.success("User created successfully!");
+            }
+            else{
+                toast.error("Registration failed. Please try again.");
             }
         })
-        .then(response => console.log(response.data))
         
     };
 
@@ -51,22 +52,23 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)} 
                 />
-                <input 
-                    type="text"  
-                    placeholder="Enter your role" 
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)} 
-                />
+              
                 <input 
                     type="url" 
                     placeholder="Enter your avatar URL" 
                     value={avatar}
                     onChange={(e) => setAvatar(e.target.value)} 
                 />
+               
                 <button type="submit">Register</button>
             </form>
+            <ToastContainer />
         </>
     );
 };
 
 export default Register;
+
+
+
+
